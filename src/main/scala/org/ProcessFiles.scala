@@ -18,7 +18,7 @@ object ProcessFiles {
 
     var (id, note, memo, amount, date) = ("", "", "", 0.toFloat, new Date())
 
-    val dateFormat = new SimpleDateFormat("yyyyMMdd")
+    val dateFormat = new SimpleDateFormat("yyyyMMddHHmmss")
 
     val handle = new OFXHandler {
       override def onElement(s: String, v: String): Unit = {

@@ -9,9 +9,15 @@ object Analyze {
     }
 
     val filename = System.getProperty("user.home") + "/qfx/" + "CreditCard5.qfx"
-    val txns = ProcessFiles.process(filename)
+    val filename2 = System.getProperty("user.home") + "/qfx/" + "Checking1.qfx"
+    var txns = ProcessFiles.process(filename) ::: ProcessFiles.process(filename2)
 
 
+    println("Spending:" +  sum(txns.filter(_.amount < 0)))
+
+    val after = new java.util.Date("09/01/2014")
+
+    txns = txns.filter( _.date.after(after) )
     println("Spending:" +  sum(txns.filter(_.amount < 0)))
 
     val source = scala.io.Source.fromFile(System.getProperty("user.home") + "/qfx/" + "regexconfig.txt")
