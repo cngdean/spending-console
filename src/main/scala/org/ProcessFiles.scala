@@ -1,7 +1,10 @@
 package org
 
+import java.text.SimpleDateFormat
+
 import net.sf.ofx4j.io.OFXHandler
 import net.sf.ofx4j.io.nanoxml.NanoXMLOFXReader
+import java.util.{Calendar, Date}
 
 /**
  * Created by carmen on 12/1/14.
@@ -13,22 +16,25 @@ object ProcessFiles {
 
     val txns = scala.collection.mutable.ListBuffer.empty[Transaction]
 
-    var (id, note, memo, amount) = ("", "", "", 0.toFloat)
+    var (id, note, memo, amount, date) = ("", "", "", 0.toFloat, new Date())
+
+    val dateFormat = new SimpleDateFormat("yyyyMMdd")
 
     val handle = new OFXHandler {
       override def onElement(s: String, v: String): Unit = {
         s match {
           case ("TRNAMT") => amount = v.toFloat
-          case ("NAME") => note = v
+          case ("NAME") => note = v.toLowerCase()
           case ("FITID") => id = v
-          case ("MEMO") => memo = v
+          case ("MEMO") => memo = v.toLowerCase()
+          case ("DTPOSTED") => date = dateFormat.parse(v)
           case _ =>
         }
       }
 
       override def endAggregate(s: String): Unit = {
         if ("STMTTRN" == s) {
-          txns += Transaction(id, note, memo, amount)
+          txns += Transaction(id, note, memo, amount, date)
         }
       }
 
