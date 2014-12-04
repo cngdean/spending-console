@@ -16,14 +16,14 @@ object ProcessFiles {
 
     val txns = scala.collection.mutable.ListBuffer.empty[Transaction]
 
-    var (id, note, memo, amount, date) = ("", "", "", 0.toFloat, new Date())
+    var (id, note, memo, amount, date) = ("", "", "", BigDecimal(0), new Date())
 
     val dateFormat = new SimpleDateFormat("yyyyMMddHHmmss")
 
     val handle = new OFXHandler {
       override def onElement(s: String, v: String): Unit = {
         s match {
-          case ("TRNAMT") => amount = v.toFloat
+          case ("TRNAMT") => amount = BigDecimal(v)
           case ("NAME") => note = v.toLowerCase()
           case ("FITID") => id = v
           case ("MEMO") => memo = v.toLowerCase()
@@ -44,7 +44,7 @@ object ProcessFiles {
         if ("STMTTRN" == s) {
           note = ""
           id = ""
-          amount = 0.toFloat
+          amount = BigDecimal(0)
           memo = ""
         }
       }

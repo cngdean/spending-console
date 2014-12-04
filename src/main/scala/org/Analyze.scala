@@ -12,12 +12,14 @@ object Analyze {
     val filename2 = System.getProperty("user.home") + "/qfx/" + "Checking1.qfx"
     var txns = ProcessFiles.process(filename) ::: ProcessFiles.process(filename2)
 
-
     println("Spending:" +  sum(txns.filter(_.amount < 0)))
 
     val after = new java.util.Date("09/01/2014")
 
+    println(TransactionSummary.spendingByMonth(txns))
+
     txns = txns.filter( _.date.after(after) )
+    println(TransactionSummary.spendingByMonth(txns))
     println("Spending:" +  sum(txns.filter(_.amount < 0)))
 
     val source = scala.io.Source.fromFile(System.getProperty("user.home") + "/qfx/" + "regexconfig.txt")
