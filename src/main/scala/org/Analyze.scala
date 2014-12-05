@@ -22,12 +22,8 @@ object Analyze {
     println(TransactionSummary.spendingByMonth(txns))
     println("Spending:" +  sum(txns.filter(_.amount < 0)))
 
-    val source = scala.io.Source.fromFile(System.getProperty("user.home") + "/qfx/" + "regexconfig.txt")
-    for (l <- source.getLines()) {
-      val l2 = l.split("\t")
-      val (name, regex) = (l2.head, l2.tail.head)
-      println(name + ":\t" + sum(txns.filter( _.note.matches(regex))))
-    }
+    println("Spending by category\n" )
+    println(TransactionSummary.spendingByCategory(txns))
 
   }
 }

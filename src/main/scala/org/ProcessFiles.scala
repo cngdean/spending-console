@@ -34,7 +34,7 @@ object ProcessFiles {
 
       override def endAggregate(s: String): Unit = {
         if ("STMTTRN" == s) {
-          txns += Transaction(id, note, memo, amount, date)
+          txns += Transaction(id, note, memo, amount, date, CategoryMapper.findCategory(note))
         }
       }
 
