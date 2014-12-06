@@ -15,15 +15,17 @@ object Analyze {
     println("Spending:" +  sum(txns.filter(_.amount < 0)))
 
     val after = new java.util.Date("09/01/2014")
+    //    txns = txns.filter( _.date.after(after) )
 
     println(TransactionSummary.spendingByMonth(txns))
 
-    txns = txns.filter( _.date.after(after) )
     println(TransactionSummary.spendingByMonth(txns))
     println("Spending:" +  sum(txns.filter(_.amount < 0)))
 
     println("Spending by category\n" )
     println(TransactionSummary.spendingByCategory(txns))
+
+    println( for (m <- TransactionSummary.splitByMonth(txns)) yield (m._1, TransactionSummary.spendingByCategory(m._2) ))
 
   }
 }
