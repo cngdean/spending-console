@@ -27,5 +27,7 @@ object Analyze {
 
     println( for (m <- TransactionSummary.splitByMonth(txns)) yield (m._1, TransactionSummary.spendingByCategory(m._2) ))
 
+    println(txns.head)
+
   }
 }

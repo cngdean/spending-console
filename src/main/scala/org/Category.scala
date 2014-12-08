@@ -1,25 +1,32 @@
 package org
 
-case class Category(categoryName: String)
+import scala.util.matching.Regex
 
-object CategoryMapper {
-  val source = scala.io.Source.fromFile(System.getProperty("user.home") + "/qfx/" + "regexconfig.txt")
+case class Category(categoryName: String, regex: String) {
+  override def equals(c: Any) = c match {
+    case that: Category => this.categoryName == that.categoryName && this.regex == that.regex
+    case _ => false
+  }
+}
 
-  def buildCategories(lines: List[String]):List[(String,String)] = {
+case class CategoryMapper(filename: String) {
+  val source = scala.io.Source.fromFile(filename)
+
+  def buildCategories(lines: List[String]):List[Category] = {
     if (lines.isEmpty) Nil
     else {
-      val items = lines.head.split("\t")
+      val items = lines.head.split("\\|\\|")
+      println(lines.head)
       val (cat,regex) = (items.head, items.tail.head)
-      (cat, regex) :: buildCategories(lines.tail)
+      Category(cat, regex) :: buildCategories(lines.tail)
     }
   }
 
-  val categories = buildCategories(source.getLines().toList) ::: ("Needs Category", ".*") :: Nil
+  val categories: List[Category] = buildCategories(source.getLines().toList) ::: Category("Needs Category", ".*") :: Nil
 
   def findCategory(desc: String):Category = {
-    val match2 = categories.dropWhile((x) => !desc.matches(x._2))
-    if (!match2.isEmpty) Category(match2.head._1)
-    else Category("Unknown")
+    val match2 = categories.dropWhile((x: Category) => !desc.matches(x.regex))
+    match2.head
   }
 
 }

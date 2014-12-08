@@ -34,7 +34,7 @@ object ProcessFiles {
 
       override def endAggregate(s: String): Unit = {
         if ("STMTTRN" == s) {
-          txns += Transaction(id, note, memo, amount, date, CategoryMapper.findCategory(note))
+          txns += Transaction(id, note, memo, amount, date, CategoryMapper(System.getProperty("user.home") + "/qfx/" + "regexconfig.txt").findCategory(note))
         }
       }
 
