@@ -1,7 +1,5 @@
 package org
 
-import scala.util.matching.Regex
-
 case class Category(categoryName: String, regex: String) {
   override def equals(c: Any) = c match {
     case that: Category => this.categoryName == that.categoryName && this.regex == that.regex
