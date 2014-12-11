@@ -8,9 +8,8 @@ object Analyze {
       txns.map( (x: Transaction) => x.amount).sum
     }
 
-    val filename = System.getProperty("user.home") + "/qfx/" + "CreditCard5.qfx"
-    val filename2 = System.getProperty("user.home") + "/qfx/" + "Checking1.qfx"
-    var txns = ProcessFiles.process(filename) ::: ProcessFiles.process(filename2)
+    val dir = System.getProperty("user.home") + "/qfx/"
+    var txns = ProcessFiles.processDirectory(dir)
     println(TransactionSummary.spendingByCategory(txns))
 
     println("Spending:" +  sum(txns.filter(_.amount < 0)))

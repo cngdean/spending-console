@@ -11,6 +11,18 @@ import java.util.{Calendar, Date}
  */
 object ProcessFiles {
 
+  def processDirectory(directory: String):List[Transaction] = {
+
+      import java.io.File
+      def recursiveListFiles(f: File): Array[File] = {
+        val these = f.listFiles
+        these ++ these.filter(_.isDirectory).flatMap(recursiveListFiles)
+      }
+
+      val qfxFiles = recursiveListFiles(new File(directory)).filter(_.getName.endsWith(".qfx"))
+      qfxFiles.map(_.getAbsolutePath).map(process).flatten.toList
+    }
+
   def process(filename: String):List[Transaction] = {
     val reader = new NanoXMLOFXReader
 
@@ -24,9 +36,9 @@ object ProcessFiles {
       override def onElement(s: String, v: String): Unit = {
         s match {
           case ("TRNAMT") => amount = BigDecimal(v)
-          case ("NAME") => note = v.toLowerCase()
+          case ("NAME") => note = v
           case ("FITID") => id = v
-          case ("MEMO") => memo = v.toLowerCase()
+          case ("MEMO") => memo = v
           case ("DTPOSTED") => date = dateFormat.parse(v)
           case _ =>
         }

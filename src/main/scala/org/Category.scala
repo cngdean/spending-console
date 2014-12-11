@@ -9,7 +9,6 @@ case class CategoryMapper(filename: String) {
     if (lines.isEmpty) Nil
     else {
       val items = lines.head.split("\\|\\|")
-      println(lines.head)
       val (cat,regex) = (items.head, items.tail.head)
       Category(cat, regex) :: buildCategories(lines.tail)
     }
