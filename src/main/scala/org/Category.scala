@@ -1,11 +1,6 @@
 package org
 
-case class Category(categoryName: String, regex: String) {
-  override def equals(c: Any) = c match {
-    case that: Category => this.categoryName == that.categoryName && this.regex == that.regex
-    case _ => false
-  }
-}
+case class Category(categoryName: String, regex: String)
 
 case class CategoryMapper(filename: String) {
   val source = scala.io.Source.fromFile(filename)
