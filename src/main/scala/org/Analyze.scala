@@ -9,7 +9,7 @@ object Analyze {
     }
 
     val dir = System.getProperty("user.home") + "/qfx/"
-    var txns = ProcessFiles.processDirectory(dir)
+    var txns = ProcessFiles.processDirectory(dir, System.getProperty("user.home") + "/qfx/" + "regexconfig.txt")
     println(TransactionSummary.spendingByCategory(txns))
 
     println("Spending:" +  sum(txns.filter(_.amount < 0)))

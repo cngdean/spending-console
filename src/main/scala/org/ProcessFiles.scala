@@ -11,8 +11,7 @@ import java.util.{Calendar, Date}
  */
 object ProcessFiles {
 
-  def processDirectory(directory: String):List[Transaction] = {
-
+  def processDirectory(directory: String, regexfile: String):List[Transaction] = {
       import java.io.File
       def recursiveListFiles(f: File): Array[File] = {
         val these = f.listFiles
@@ -20,10 +19,10 @@ object ProcessFiles {
       }
 
       val qfxFiles = recursiveListFiles(new File(directory)).filter(_.getName.endsWith(".qfx"))
-      qfxFiles.map(_.getAbsolutePath).map(process).flatten.toList
+      qfxFiles.map(_.getAbsolutePath).map(process(_, regexfile)).flatten.toList
     }
 
-  def process(filename: String):List[Transaction] = {
+  def process(filename: String, regexfile: String):List[Transaction] = {
     val reader = new NanoXMLOFXReader
 
     val txns = scala.collection.mutable.ListBuffer.empty[Transaction]
@@ -31,6 +30,8 @@ object ProcessFiles {
     var (id, note, memo, amount, date) = ("", "", "", BigDecimal(0), new Date())
 
     val dateFormat = new SimpleDateFormat("yyyyMMddHHmmss")
+
+    val catMapper = CategoryMapper(regexfile)
 
     val handle = new OFXHandler {
       override def onElement(s: String, v: String): Unit = {
@@ -46,11 +47,13 @@ object ProcessFiles {
 
       override def endAggregate(s: String): Unit = {
         if ("STMTTRN" == s) {
-          txns += Transaction(id, note, memo, amount, date, CategoryMapper(System.getProperty("user.home") + "/qfx/" + "regexconfig.txt").findCategory(note))
+          val category = catMapper.findCategory(note)
+          if (!category.exclude)
+            txns += Transaction(id, note, memo, amount, date, category)
         }
       }
 
-      override def onHeader(s: String, s1: String): Unit = println("header" + s)
+      override def onHeader(s: String, s1: String): Unit = {}
 
       override def startAggregate(s: String): Unit = {
         if ("STMTTRN" == s) {
